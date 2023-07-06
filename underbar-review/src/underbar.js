@@ -129,7 +129,7 @@
     _.each(collection, (value, i, array) => {
       if (accumulator === undefined) {
         // in some tests, the accum becomes undefined, so this is a way to always have ref to the original accum
-        i === 0 ? accumulator = array[i] : accumulator = iterator(arguments[2], array[i]);
+        i === 0 ? accumulator = array[0] : accumulator = iterator(arguments[2], array[i]);
       } else {
         accumulator = iterator(accumulator, array[i]);
       }
@@ -139,8 +139,7 @@
 
   // Determine if the array or object contains a given value (using `===`).
   _.contains = function(collection, target) {
-    // TIP: Many iteration problems can be most easily expressed in
-    // terms of reduce(). Here's a freebie to demonstrate!
+    // TIP: Many iteration problems can be most easily expressed in terms of reduce(). Here's a freebie to demonstrate!
     return _.reduce(collection, function(wasFound, item) {
       if (wasFound) {
         return true;
@@ -153,12 +152,28 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    return _.reduce(collection, (soFar, item) => {
+      if (iterator) {
+        if (!iterator(item)) {
+          soFar = false;
+        }
+      } else if (!item) {
+        soFar = false;
+      }
+      return soFar;
+    }, true);
   };
 
-  // Determine whether any of the elements pass a truth test. If no iterator is
-  // provided, provide a default one
+  // Determine whether any of the elements pass a truth test. If no iterator is provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    iterator = iterator || _.identity;
+    const truthyFilter = _.filter(collection, (val) => {
+      if (iterator(val)) {
+        return true;
+      }
+    });
+    return truthyFilter.length >= 1 ? true : false;
   };
 
 
