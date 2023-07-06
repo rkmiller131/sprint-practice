@@ -1,3 +1,4 @@
+// USE: functional instantiation pattern
 var LinkedList = function() {
   var list = {};
   list.head = null;
@@ -6,25 +7,25 @@ var LinkedList = function() {
   // whatever the tail is, we can just have that node's next point to our new node
   // and have the tail point the new node
   list.addToTail = function(value) {
-    const newNode = new Node(value);
+    const newNode = Node(value);
     // so... do we have a head? If yes, do the above steps
-    if (this.head) {
-      const lastNode = this.tail;
+    if (list.head) {
+      const lastNode = list.tail;
       lastNode.next = newNode;
     } else {
       // if no, then that means the list is empty. Set both head and tail to new node
-      this.head = newNode;
+      list.head = newNode;
     }
     // this can be outside the if/else block because no matter what, the tail will be the new node
-    this.tail = newNode;
+    list.tail = newNode;
   };
 
   list.removeHead = function() {
-    const firstNode = this.head;
+    const firstNode = list.head;
     // as long as the list isn't empty (head exists),
     if (firstNode) {
       // then shift the head to the current node's next.
-      this.head = firstNode.next;
+      list.head = firstNode.next;
     }
     // should return the value of the former head when removeHead is called
     return firstNode.value;
@@ -44,7 +45,7 @@ var LinkedList = function() {
         return false;
       }
     };
-    return traverseNodes(this.head);
+    return traverseNodes(list.head);
   };
 
   return list;
