@@ -119,261 +119,489 @@
 //-----------------------------------------------------------------------
 
 // Returns whether a given input character is a whitespace character.
-var isWhitespace = function (c) {
-  return c === ' '
-      || c === '\r'
-      || c === '\n'
-      || c === '\t';
-};
+// var isWhitespace = function (c) {
+//   return c === ' '
+//       || c === '\r'
+//       || c === '\n'
+//       || c === '\t';
+// };
 
-var isEndOfPrim = function (c) {
-  return isWhitespace(c)
-      || c === ','
-      || c === '}'
-      || c === ']';
-};
+// var isEndOfPrim = function (c) {
+//   return isWhitespace(c)
+//       || c === ','
+//       || c === '}'
+//       || c === ']';
+// };
 
+// var parseJSON = function(json) {
+//   var j = 0;
+//   var isInvalid = false;
+//   var result;
+
+//   var parseNext = function() {
+//     var allowed = ['+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+//     if (json[j] === '\"') {
+//       return parseString();
+//     } else if (json[j] === '[') {
+//       return parseObject(true);
+//     } else if (json[j] === '{') {
+//       return parseObject(false);
+//     } else if (allowed.includes(json[j])) {
+//       var temp = parseNumber();
+//       return temp;
+//     }
+//     var res = '';
+//     while (!isEndOfPrim(json[j])) {
+//       res += json[j];
+//       j += 1;
+//     }
+//     j -= 1;
+//     if (res === 'true') {
+//       return true;
+//     } else if (res === 'false') {
+//       return false;
+//     } else if (res === 'null') {
+//       return null;
+//     }
+//     throw SyntaxError('Invalid Format! Expected ' + res + ' to be a boolean, number, or null.');
+//   };
+//   while (isWhitespace(json[j])) {
+//     j += 1;
+//   }
+
+//   // With the assumption that the index j is at the beginning { of the object, parses object
+//   // and returns it with j being repositioned to the end } index.
+//   // If isArray is true, then repeats the same, but with the [ and ] brackets under assumption
+//   // that it is an array being parsed.
+//   var parseObject = function(isArray) {
+//     if (isArray && json[j] !== '[') {
+//       throw SyntaxError('Invalid Format! Expected \'[\' at beginning of array ' +
+//                         'at character ' + j + '.');
+//     }
+//     if (!isArray && json[j] !== '{') {
+//       throw SyntaxError('Invalid Format! Expected \'{\' at beginning of object ' +
+//                         'at character ' + j + '.');
+//     }
+//     var res = isArray ? [] : {};
+//     j += 1;
+//     var isAfterComma = false;
+//     while (j < json.length) {
+//       // First clears past all whitespace.
+//       while (isWhitespace(json[j])) {
+//         j += 1;
+//       }
+
+//       // Checks if the object or array ends at this element.
+//       if (!isAfterComma && (isArray && json[j] === ']' || !isArray && json[j] === '}')) {
+//         break;
+//       }
+
+//       // If an object, grab the key and clears all whitespace and the required ':' character,
+//       // if one is present.
+//       if (!isArray) {
+//         var key = parseString();
+//         j += 1;
+
+//         // Clears whitespace until the required ':' character
+//         while (isWhitespace(json[j])) {
+//           j += 1;
+//         }
+//         // If present, increment j to pass it and clear whitespace until the value.
+//         if (json[j] !== ':') {
+//           throw SyntaxError('Invalid Format! Expected \':\' after object key ' +
+//                             'at character ' + j + '.');
+//         }
+//         j += 1;
+//         while (isWhitespace(json[j])) {
+//           j += 1;
+//         }
+//       }
+
+//       // Grab the value, which is another String, Array, Object, or Primitive type.
+//       var value = parseNext();
+//       j += 1;
+
+//       // Assigns this key to res.
+//       if (isArray) {
+//         res.push(value);
+//       } else {
+//         res[key] = value;
+//       }
+
+//       // Clears whitespace and checks if next character is '}' or ',' and moves past the comma
+//       // for the loop start again and work on the next item.
+//       while (isWhitespace(json[j])) {
+//         j += 1;
+//       }
+//       if (isArray && json[j] === ']' || !isArray && json[j] === '}') {
+//         break;
+//       }
+//       if (json[j] !== ',') {
+//         throw SyntaxError('Invalid Format! Expected \',\' or \'' + (isArray ? ']' : '}') +
+//                           '\' at character ' + j + '.');
+//       }
+//       isAfterComma = true;
+//       j += 1;
+//     }
+
+//     if (isArray && json[j] !== ']') {
+//       throw SyntaxError('Invalid Format! Expected object to end in \']\' at character ' + j + '.');
+//     }
+//     if (!isArray && json[j] !== '}') {
+//       throw SyntaxError('Invalid Format! Expected object to end in \'}\' at character ' + j + '.');
+//     }
+//     return res;
+//   };
+
+//   // Assumes that j is positioned at a '"' character and tries to parse the stirng if in a valid
+//   // format.
+//   var parseString = function() {
+//     if (json[j] !== '"') {
+//       throw SyntaxError('Invalid Format! Expected \'"\' at beginning of string ' +
+//                         'at character ' + j + '.');
+//     }
+//     var res = '';
+//     j += 1;
+//     // Computes the number of escape characters in a row.
+//     // Every even number of escapes should produce another escape character.
+//     // Odd escape characters should be ignored.
+//     var numEscapes = 0;
+//     while (j < json.length) {
+//       if (json[j] === '\"' && json[j - 1] !== '\\') {
+//         break;
+//       }
+//       if (json[j] === '\\') {
+//         numEscapes += 1;
+//         if (numEscapes % 2 === 0) {
+//           res += '\\';
+//           j += 1;
+//         } else {
+//           j += 1;
+//         }
+//       } else {
+//         numEscapes = 0;
+//         res += json[j];
+//         j += 1;
+//       }
+//     }
+
+//     // Ensures the string eventually ends.
+//     if (json[j] !== '"') {
+//       throw SyntaxError('Invalid Format! Expected string to end in \'"\' at character ' + j + '.');
+//     }
+//     return res;
+//   };
+
+//   // Parses number in string, assuming j is at a '-' or a '0'-'9'.
+//   var parseNumber = function() {
+//     var res = '';
+//     if (json[j] === '-') {
+//       res += '-';
+//       j += 1;
+//     } else if (json[j] === '+') {
+//       j += 1;
+//     }
+//     // Clears through all numbers, ensuring decimals and 'e' are at the correct spot.
+//     while (!isEndOfPrim(json[j]) && json[j] !== '.' && json[j] !== 'e' && json[j] !== 'E') {
+//       if (Number.isNaN(Number.parseInt(json[j]))) {
+//         throw SyntaxError('Invalid Format! Expected \'' + json[j] +
+//                           '\' to be a number at character ' + j + '.');
+//       }
+//       res += json[j];
+//       j += 1;
+//     }
+//     if (json[j] === '.') {
+//       res += json[j];
+//       j += 1;
+//       if (Number.isNaN(Number.parseInt(json[j]))) {
+//         throw SyntaxError('Invalid Format! Number \'' + res + '\' missing fractional number.');
+//       }
+
+//       while (!isEndOfPrim(json[j]) && json[j] !== 'e' && json[j] !== 'E') {
+//         if (Number.isNaN(Number.parseInt(json[j]))) {
+//           throw SyntaxError('Invalid Format! Expected \'' + json[j] +
+//                             '\' to be a number at character ' + j + '.');
+//         }
+//         res += json[j];
+//         j += 1;
+//       }
+//     }
+//     if (json[j] === 'e' || json[j] === 'E') {
+//       res += json[j];
+//       j += 1;
+
+//       if (json[j] === '-') {
+//         res += '-';
+//         j += 1;
+//       } else if (json[j] === '+') {
+//         j += 1;
+//       }
+//       if (Number.isNaN(Number.parseInt(json[j]))) {
+//         throw SyntaxError('Invalid Format! Number \'' + res + '\' missing exponent.');
+//       }
+
+//       while (!isEndOfPrim(json[j])) {
+//         if (Number.isNaN(Number.parseInt(json[j]))) {
+//           throw SyntaxError('Invalid Format! Expected \'' + json[j] +
+//                             '\' to be a number at character ' + j + '.');
+//         }
+//         res += json[j];
+//         j += 1;
+//       }
+//     }
+//     j -= 1;
+//     var firstIndex = json[0] === '-' ? 1 : 0;
+//     if (res[firstIndex] === '0' && firstIndex + 1 < res.length &&
+//         !Number.isNaN(Number.parseInt(res[firstIndex + 1]))) {
+//       throw SyntaxError('Invalid Format! Number \'' + res + '\' cannot have leading zeroes');
+//     }
+//     if (res[res.length - 1] === 'e') {
+//       throw SyntaxError('Invalid Format! Number \'' + res + '\' missing exponent.');
+//     }
+//     var parsed = Number.parseFloat(res);
+//     if (Number.isNaN(parsed)) {
+//       throw SyntaxError('Invalid Format! Number \'' + res + '\' is not a number.');
+//     }
+//     return parsed;
+//   };
+
+//   var result = parseNext();
+//   j += 1;
+
+//   while (isWhitespace(json[j])) {
+//     j += 1;
+//   }
+//   if (j < json.length) {
+//     throw SyntaxError('Invalid Format! Expected json to end.');
+//   }
+//   return result;
+// };
+
+// ----------------------------------------------------------------------------------------
+// Alternative Solution (Shorter)
+// ----------------------------------------------------------------------------------------
 var parseJSON = function(json) {
-  var j = 0;
-  var isInvalid = false;
-  var result;
+  // The index of the current character
+  var index = 0;
 
-  var parseNext = function() {
-    var allowed = ['+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    if (json[j] === '\"') {
-      return parseString();
-    } else if (json[j] === '[') {
-      return parseObject(true);
-    } else if (json[j] === '{') {
-      return parseObject(false);
-    } else if (allowed.includes(json[j])) {
-      var temp = parseNumber();
-      return temp;
+  // The current character
+  var ch = ' ';
+  var escapee = {
+    '"': '"',
+    '\\': '\\',
+    '/': '/',
+    b: '\b',
+    f: '\f',
+    n: '\n',
+    r: '\r',
+    t: '\t'
+  };
+
+  // Move to the next character and check that it is what we expect
+  var nextCh = function(c) {
+    // If ch is not what we expect, error
+    if (c && c !== ch) {
+      throw new SyntaxError('Expected "' + c + '" instead of "' + ch + '"');
     }
-    var res = '';
-    while (!isEndOfPrim(json[j])) {
-      res += json[j];
-      j += 1;
+
+    ch = json.charAt(index);
+    index += 1;
+
+    return ch;
+  };
+
+  var numberParse = function() {
+    var number;
+    var string = '';
+
+    if (ch === '-') {
+      string = '-';
+      nextCh('-');
     }
-    j -= 1;
-    if (res === 'true') {
+    while (ch >= '0' && ch <= '9') {
+      string += ch;
+      nextCh();
+    }
+    if (ch === '.') {
+      string += ch;
+      while (nextCh() && ch >= '0' && ch <= '9') {
+        string += ch;
+      }
+    }
+
+    // Scientific notation
+    if (ch === 'e' || ch === 'E') {
+      string += ch;
+      nextCh();
+      if (ch === '-' || ch === '+') {
+        string += ch;
+        nextCh();
+      }
+      while (ch >= '0' && ch <= '9') {
+        string += ch;
+        nextCh();
+      }
+    }
+
+    number = parseFloat(string, 10);
+
+    // Check that number is valid
+    if (!isFinite(number)) {
+      throw new SyntaxError('Bad number');
+    } else {
+      return number;
+    }
+  };
+
+  var stringParse = function() {
+    var hex, i, unicodeValue;
+    var string = '';
+
+    if (ch === '"') {
+      while (nextCh()) {
+        if (ch === '"') {
+          nextCh();
+          return string;
+        }
+
+        // Parse escaped characters
+        if (ch === '\\') {
+          nextCh();
+          if (ch === 'u') {
+            unicodeValue = 0;
+            for (i = 0; i < 4; i += 1) {
+              hex = parseInt(next(), 16);
+              if (!isFinite(hex)) {
+                break;
+              }
+              unicodeValue = unicodeValue * 16 + hex;
+            }
+            string += String.fromCharCode(unicodeValue);
+          } else if (typeof escapee[ch] === 'string') {
+            string += escapee[ch];
+          } else {
+            break;
+          }
+        } else {
+          string += ch;
+        }
+      }
+    }
+    throw new SyntaxError('Bad string');
+  };
+
+  // Remove whitespace between characters
+  var compressWhitespace = function() {
+    while (ch && ch <= ' ') {
+      nextCh();
+    }
+  };
+
+  var booleanParse = function() {
+    switch (ch) {
+    case 't':
+      nextCh('t');
+      nextCh('r');
+      nextCh('u');
+      nextCh('e');
       return true;
-    } else if (res === 'false') {
+    case 'f':
+      nextCh('f');
+      nextCh('a');
+      nextCh('l');
+      nextCh('s');
+      nextCh('e');
       return false;
-    } else if (res === 'null') {
+    case 'n':
+      nextCh('n');
+      nextCh('u');
+      nextCh('l');
+      nextCh('l');
       return null;
     }
-    throw SyntaxError('Invalid Format! Expected ' + res + ' to be a boolean, number, or null.');
+    throw new SyntaxError('Unexpected "' + ch + '"');
   };
-  while (isWhitespace(json[j])) {
-    j += 1;
+
+  var arrayParse = function() {
+    var array = [];
+
+    if (ch === '[') {
+      nextCh('[');
+      compressWhitespace();
+      if (ch === ']') {
+        nextCh(']');
+        // Array is empty
+        return array;
+      }
+      while (ch) {
+        array.push(initiateParse());
+        compressWhitespace();
+        if (ch === ']') {
+          nextCh(']');
+          return array;
+        }
+        nextCh(',');
+        compressWhitespace();
+      }
+    }
+    throw new SyntaxError('Bad array');
+  };
+
+  var objectParse = function() {
+    var key;
+    var object = {};
+
+    if (ch === '{') {
+      nextCh('{');
+      compressWhitespace();
+      if (ch === '}') {
+        nextCh('}');
+        // Object is empty
+        return object;
+      }
+      while (ch) {
+        key = stringParse();
+        compressWhitespace();
+        nextCh(':');
+        if (Object.hasOwnProperty.call(object, key)) {
+          throw new SyntaxError('Duplicate key "' + key + '"');
+        }
+        object[key] = initiateParse();
+        compressWhitespace();
+        if (ch === '}') {
+          nextCh('}');
+          return object;
+        }
+        nextCh(',');
+        compressWhitespace();
+      }
+    }
+    throw new SyntaxError('Bad object');
+  };
+
+  // Initiate parsing of JSON string
+  var initiateParse = function() {
+    compressWhitespace();
+    switch (ch) {
+    case '{':
+      return objectParse();
+    case '[':
+      return arrayParse();
+    case '"':
+      return stringParse();
+    case '-':
+      return numberParse();
+    default:
+      return ch >= '0' && ch <= '9' ? numberParse() : booleanParse();
+    }
+  };
+
+  var result = initiateParse();
+  compressWhitespace();
+  if (ch) {
+    throw new SyntaxError('Syntax error');
   }
 
-  // With the assumption that the index j is at the beginning { of the object, parses object
-  // and returns it with j being repositioned to the end } index.
-  // If isArray is true, then repeats the same, but with the [ and ] brackets under assumption
-  // that it is an array being parsed.
-  var parseObject = function(isArray) {
-    if (isArray && json[j] !== '[') {
-      throw SyntaxError('Invalid Format! Expected \'[\' at beginning of array ' +
-                        'at character ' + j + '.');
-    }
-    if (!isArray && json[j] !== '{') {
-      throw SyntaxError('Invalid Format! Expected \'{\' at beginning of object ' +
-                        'at character ' + j + '.');
-    }
-    var res = isArray ? [] : {};
-    j += 1;
-    var isAfterComma = false;
-    while (j < json.length) {
-      // First clears past all whitespace.
-      while (isWhitespace(json[j])) {
-        j += 1;
-      }
-
-      // Checks if the object or array ends at this element.
-      if (!isAfterComma && (isArray && json[j] === ']' || !isArray && json[j] === '}')) {
-        break;
-      }
-
-      // If an object, grab the key and clears all whitespace and the required ':' character,
-      // if one is present.
-      if (!isArray) {
-        var key = parseString();
-        j += 1;
-
-        // Clears whitespace until the required ':' character
-        while (isWhitespace(json[j])) {
-          j += 1;
-        }
-        // If present, increment j to pass it and clear whitespace until the value.
-        if (json[j] !== ':') {
-          throw SyntaxError('Invalid Format! Expected \':\' after object key ' +
-                            'at character ' + j + '.');
-        }
-        j += 1;
-        while (isWhitespace(json[j])) {
-          j += 1;
-        }
-      }
-
-      // Grab the value, which is another String, Array, Object, or Primitive type.
-      var value = parseNext();
-      j += 1;
-
-      // Assigns this key to res.
-      if (isArray) {
-        res.push(value);
-      } else {
-        res[key] = value;
-      }
-
-      // Clears whitespace and checks if next character is '}' or ',' and moves past the comma
-      // for the loop start again and work on the next item.
-      while (isWhitespace(json[j])) {
-        j += 1;
-      }
-      if (isArray && json[j] === ']' || !isArray && json[j] === '}') {
-        break;
-      }
-      if (json[j] !== ',') {
-        throw SyntaxError('Invalid Format! Expected \',\' or \'' + (isArray ? ']' : '}') +
-                          '\' at character ' + j + '.');
-      }
-      isAfterComma = true;
-      j += 1;
-    }
-
-    if (isArray && json[j] !== ']') {
-      throw SyntaxError('Invalid Format! Expected object to end in \']\' at character ' + j + '.');
-    }
-    if (!isArray && json[j] !== '}') {
-      throw SyntaxError('Invalid Format! Expected object to end in \'}\' at character ' + j + '.');
-    }
-    return res;
-  };
-
-  // Assumes that j is positioned at a '"' character and tries to parse the stirng if in a valid
-  // format.
-  var parseString = function() {
-    if (json[j] !== '"') {
-      throw SyntaxError('Invalid Format! Expected \'"\' at beginning of string ' +
-                        'at character ' + j + '.');
-    }
-    var res = '';
-    j += 1;
-    // Computes the number of escape characters in a row.
-    // Every even number of escapes should produce another escape character.
-    // Odd escape characters should be ignored.
-    var numEscapes = 0;
-    while (j < json.length) {
-      if (json[j] === '\"' && json[j - 1] !== '\\') {
-        break;
-      }
-      if (json[j] === '\\') {
-        numEscapes += 1;
-        if (numEscapes % 2 === 0) {
-          res += '\\';
-          j += 1;
-        } else {
-          j += 1;
-        }
-      } else {
-        numEscapes = 0;
-        res += json[j];
-        j += 1;
-      }
-    }
-
-    // Ensures the string eventually ends.
-    if (json[j] !== '"') {
-      throw SyntaxError('Invalid Format! Expected string to end in \'"\' at character ' + j + '.');
-    }
-    return res;
-  };
-
-  // Parses number in string, assuming j is at a '-' or a '0'-'9'.
-  var parseNumber = function() {
-    var res = '';
-    if (json[j] === '-') {
-      res += '-';
-      j += 1;
-    } else if (json[j] === '+') {
-      j += 1;
-    }
-    // Clears through all numbers, ensuring decimals and 'e' are at the correct spot.
-    while (!isEndOfPrim(json[j]) && json[j] !== '.' && json[j] !== 'e' && json[j] !== 'E') {
-      if (Number.isNaN(Number.parseInt(json[j]))) {
-        throw SyntaxError('Invalid Format! Expected \'' + json[j] +
-                          '\' to be a number at character ' + j + '.');
-      }
-      res += json[j];
-      j += 1;
-    }
-    if (json[j] === '.') {
-      res += json[j];
-      j += 1;
-      if (Number.isNaN(Number.parseInt(json[j]))) {
-        throw SyntaxError('Invalid Format! Number \'' + res + '\' missing fractional number.');
-      }
-
-      while (!isEndOfPrim(json[j]) && json[j] !== 'e' && json[j] !== 'E') {
-        if (Number.isNaN(Number.parseInt(json[j]))) {
-          throw SyntaxError('Invalid Format! Expected \'' + json[j] +
-                            '\' to be a number at character ' + j + '.');
-        }
-        res += json[j];
-        j += 1;
-      }
-    }
-    if (json[j] === 'e' || json[j] === 'E') {
-      res += json[j];
-      j += 1;
-
-      if (json[j] === '-') {
-        res += '-';
-        j += 1;
-      } else if (json[j] === '+') {
-        j += 1;
-      }
-      if (Number.isNaN(Number.parseInt(json[j]))) {
-        throw SyntaxError('Invalid Format! Number \'' + res + '\' missing exponent.');
-      }
-
-      while (!isEndOfPrim(json[j])) {
-        if (Number.isNaN(Number.parseInt(json[j]))) {
-          throw SyntaxError('Invalid Format! Expected \'' + json[j] +
-                            '\' to be a number at character ' + j + '.');
-        }
-        res += json[j];
-        j += 1;
-      }
-    }
-    j -= 1;
-    var firstIndex = json[0] === '-' ? 1 : 0;
-    if (res[firstIndex] === '0' && firstIndex + 1 < res.length &&
-        !Number.isNaN(Number.parseInt(res[firstIndex + 1]))) {
-      throw SyntaxError('Invalid Format! Number \'' + res + '\' cannot have leading zeroes');
-    }
-    if (res[res.length - 1] === 'e') {
-      throw SyntaxError('Invalid Format! Number \'' + res + '\' missing exponent.');
-    }
-    var parsed = Number.parseFloat(res);
-    if (Number.isNaN(parsed)) {
-      throw SyntaxError('Invalid Format! Number \'' + res + '\' is not a number.');
-    }
-    return parsed;
-  };
-
-  var result = parseNext();
-  j += 1;
-
-  while (isWhitespace(json[j])) {
-    j += 1;
-  }
-  if (j < json.length) {
-    throw SyntaxError('Invalid Format! Expected json to end.');
-  }
   return result;
 };
 
