@@ -1,0 +1,37 @@
+body, html{
+  height:100%;
+}
+body{
+  margin: 0px;
+  background-color:#444;
+  font-size: 18px;
+  background-image: url('assets/danceFloor.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+body, a:link, a:visited, a:active{
+  color: lightblue;
+}
+.title, .addDancerButton{
+  padding:10px 22px;
+}
+.topbar{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height:160px;
+  width: 100%;
+  background-color: rgba(85, 85, 85, 0.4);
+  position: absolute;
+  bottom: 0.5%;
+}
+.title{
+  background-color: rgba(119, 119, 119, 0.7);
+  margin: 0 20px;
+}
+.dancer{
+  border:10px solid red;
+  border-radius:10px;
+  position:absolute;
+}
