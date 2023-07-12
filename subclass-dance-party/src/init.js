@@ -16,31 +16,19 @@ $(document).ready(function() {
      * to the stage.
      */
     var dancerMakerFunctionName = $(this).data('dancer-maker-function-name');
-
     // get the maker function for the kind of dancer we're supposed to make
     var dancerMakerFunction = window[dancerMakerFunctionName];
 
     // make a dancer with a random position
 
-    var dancer = dancerMakerFunction(
-      $('body').height() * Math.random(),
-      $('body').width() * Math.random(),
-      Math.random() * 1000
+    // when you refactor, don't forget the 'new' keyword here so that 'this' gets transferred properly
+    var dancer = new dancerMakerFunction(
+      $('body').height() * Math.random(), //top
+      $('body').width() * Math.random(), //left
+      Math.random() * 1000 // time between steps
     );
     $('body').append(dancer.$node);
     window.dancers.push(dancer); // added this line to keep track of all dancers created
-  });
-
-  $('.addTrainerButton').on('click', function(event) {
-    var trainerMakerFunctionName = $(this).data('trainer-maker-function-name');
-    var trainerMakerFunction = window[trainerMakerFunctionName];
-    var trainer = trainerMakerFunction(
-      ($('body').height() - 100) * Math.random(),
-      ($('body').width() - 100) * Math.random(),
-      Math.random() * 5000
-    );
-    $('body').append(trainer.$node);
-    window.dancers.push(trainer);
   });
 });
 
