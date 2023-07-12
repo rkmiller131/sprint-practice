@@ -21,10 +21,10 @@
 // TODO: refactor in pseudoclassical intantiation pattern
 var BlinkyDancer = function(top, left, timeBetweenSteps) {
   // call the super to reference the current blinky dancer as a subclass
-  // this = Object.create(BlinkyDancer.prototype)
   // debugger;
+  // var instance = Object.create(BlinkyDancer.prototype);
   Dancer.call(this, top, left, timeBetweenSteps);
-  // return this
+  // return instance;
 };
 
 BlinkyDancer.prototype = Object.create(Dancer.prototype);
