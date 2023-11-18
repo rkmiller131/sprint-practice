@@ -1,10 +1,12 @@
-// import React from 'react';
 import exampleVideoData from '../data/exampleVideoData.js';
 
 import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
+// const { useState } = React;
 
 var App = () => (
+  // [videos, setVideos] = useState([exampleVideoData]);
+  // [inFocus, setInFocus] = useState([exampleVideoData[0]]);
   <div>
     <nav className="navbar">
       <div className="col-md-6 offset-md-3">
@@ -13,10 +15,10 @@ var App = () => (
     </nav>
     <div className="row">
       <div className="col-md-7">
-        <VideoPlayer inFocus={exampleVideoData[0]}/>
+        <VideoPlayer inFocus={inFocus}/>
       </div>
       <div className="col-md-5">
-        <VideoList videos={exampleVideoData}/>
+        <VideoList videos={videos}/>
       </div>
     </div>
   </div>
